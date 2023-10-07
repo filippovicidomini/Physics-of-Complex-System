@@ -1,36 +1,36 @@
 # mandelbrot set in python
-# we check and set white or black depending on the number of iterations
-
+# scale the value of the plot and use the color map to show the iteration
 import matplotlib.pyplot as plt
 import numpy as np
 
-iteration = 0
-max_iteration = 1000
-x = np.linspace(-2, 2, 1000)
-y = np.linspace(-2, 2, 1000)
 
-# create a 2d array of complex numbers
-c = x[:, None] + 1j * y[None, :]
-z = np.zeros_like(c)
+def mandelbrot(xmin, xmax, ymin, ymax, h, w, maxit=60):
+    # set the range and scale
+    y, x = np.ogrid[ymin:ymax:h * 1j, xmin:xmax:w * 1j]
+    c = x + y * 1j
+    z = c
+    # do the iteration
+    divtime = maxit + np.zeros(z.shape, dtype=int)
+    for i in range(maxit):
+        z = z ** 2 + c
+        diverge = z * np.conj(z) > 2 ** 2
+        div_now = diverge & (divtime == maxit)
+        divtime[div_now] = i
+        z[diverge] = 2
+    return divtime
 
-# do the iteration
-while iteration < max_iteration:
-    z = z**2 + c
-    iteration += 1
 
-# create a mask of the points that diverge
-mask = (np.abs(z) < 2)
-
-# plot the set
-plt.imshow(mask.T, extent=[-2, 2, -2, 2], cmap='gray')
-# using latex+mathtext
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif')
+plt.figure(figsize=(10, 10), dpi=300)
 
-plt.title(r'$z_{n+1} = z_n^2 + c$')
-plt.xlabel(r'$\mathrm{Re}(c)$')
-plt.ylabel(r'$\mathrm{Im}(c)$')
+plt.title(r"\textbf{Mandelbrot Set}", fontsize=20)
 
-#plt.savefig('mandelbrot.png')
-plt.tight_layout()
+plt.xlabel(r"\textbf{Re}", fontsize=20)
+plt.ylabel(r"\textbf{Im}", fontsize=20)
+
+plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
+
+plt.imshow(mandelbrot(-2, 1, -1.5, 1.5, 1000, 1000))
+plt.savefig("mandelbrot.png")
 plt.show()
