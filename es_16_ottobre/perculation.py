@@ -5,7 +5,6 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 p = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
 L = 100
 
